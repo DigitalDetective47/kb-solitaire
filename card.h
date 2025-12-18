@@ -5,18 +5,16 @@ typedef unsigned char Card;
 #define QUEEN 12
 #define KING 13
 
-enum Suit
-{
-    SPADES = 0,
-    CLUBS = 1,
-    HEARTS = 2,
-    DIAMONDS = 3,
+enum Suit {
+  SPADES = 0,
+  CLUBS = 1,
+  HEARTS = 2,
+  DIAMONDS = 3,
 };
 
-enum Color
-{
-    BLACK = 0,
-    RED = 1,
+enum Color {
+  BLACK = 0,
+  RED = 1,
 };
 
 #define RANK(c) ((c) & 15)
