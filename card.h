@@ -1,3 +1,6 @@
+#ifndef _CARDH_
+#define _CARDH_
+
 typedef unsigned char Card;
 
 #define ACE 1
@@ -22,3 +25,5 @@ enum Color {
 #define COLOR(c) ((c) >> 5)
 
 #define CARD(rank, suit) ((rank) + ((suit) << 4))
+
+#endif
