@@ -1,6 +1,7 @@
-#include "card.h"
 #include <stdlib.h>
 #include <time.h>
+
+#include "card.h"
 
 struct CardPile {
   Card cards[24];
