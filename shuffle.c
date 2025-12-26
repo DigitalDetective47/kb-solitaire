@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "card.h"
-#include "main.c"
+#include "main.h"
 #include "shuffle.h"
 
 inline unsigned int brand(unsigned int max) {
