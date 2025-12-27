@@ -2,7 +2,6 @@
 #define _MAINH_
 
 #include "card.h"
-#include "terminal.h"
 
 struct CardPile {
   Card cards[24];

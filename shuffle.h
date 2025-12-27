@@ -1,8 +1,6 @@
 #ifndef _SHUFFLEH_
 #define _SHUFFLEH_
 
-#include "card.h"
-
 /**
  * @brief generate a random number with a maximum value
  * 
