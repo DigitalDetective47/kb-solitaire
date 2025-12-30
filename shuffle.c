@@ -41,8 +41,15 @@ void new_shuffle() {
 
   for (destinations_filled = 0; destinations_filled < 52;
        destinations_filled++) {
-    unsigned int r = brand(51 - destinations_filled);
+    unsigned int r = brand(52 - destinations_filled);
     *destinations[destinations_filled] = unshuffled[r];
     memmove(unshuffled + r, unshuffled + r + 1, 51 - destinations_filled - r);
+  }
+
+  drawPile.size = 24;
+  drawPile.numFlipped = 24;
+  for (unsigned char index = 0; index < len(tableau); index++) {
+    tableau[index].numFlipped = index;
+    tableau[index].size = index + 1;
   }
 }
