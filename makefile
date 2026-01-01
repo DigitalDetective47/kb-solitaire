@@ -7,3 +7,6 @@ clean: kb_solitaire.elf
 run:
 	make debug
 	./kb_solitaire.elf
+
+o3: card.h main.c main.h shuffle.c shuffle.h symbols.h terminal.c terminal.h
+	gcc -O3 -std=c23 -Wall main.c shuffle.c terminal.c -o kb_solitaire.elf
