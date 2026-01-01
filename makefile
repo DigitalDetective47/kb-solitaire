@@ -1,5 +1,5 @@
 debug: card.h main.c main.h shuffle.c shuffle.h
-	gcc -Og -std=c23 -Wall main.c shuffle.c -o kb_solitaire.elf
+	gcc -Og -g -std=c23 -Wall main.c shuffle.c -o kb_solitaire.elf
 
 clean: kb_solitaire.elf
 	rm kb_solitaire.elf
