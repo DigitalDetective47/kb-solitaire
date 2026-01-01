@@ -1,0 +1,200 @@
+#include <stdio.h>
+
+#include "main.h"
+#include "symbols.h"
+#include "terminal.h"
+
+inline void clear_screen() { printf("\e[2J\e[3J\e[;H"); }
+
+void setup_card_colors(Card card, bool selected) {
+  printf(mFGCOLOR);
+  switch (COLOR(card)) {
+  case BLACK:
+    printf(mBLACK);
+    break;
+  case RED:
+    printf(mRED);
+    break;
+  }
+  printf(";" mBGCOLOR);
+  printf(selected ? mGREEN : mWHITE);
+  printf("m");
+}
+
+void print_card_top(Card card, bool selected, bool underline) {
+  printf("\e[");
+  if (underline) {
+    printf(mUNDERLINE ";");
+  }
+  if (card) {
+    setup_card_colors(card, selected);
+    const char rank_chars[] = {'A', '2', '3', '4', '5', '6', '7',
+                               '8', '9', '1', 'J', 'Q', 'K'};
+    printf("%c", rank_chars[RANK(card) - 1]);
+    const char suit_chars[4][4] = {uSPADES, uCLUBS, uHEARTS, uDIAMONDS};
+    printf("%s", suit_chars[SUIT(card)]);
+  } else {
+    printf(mFGCOLOR mWHITE ";" mBGCOLOR mRED "m" uSPADES uHEARTS);
+  }
+  printf("\e[m");
+}
+
+void print_card_bottom(Card card, bool selected) {
+  printf("\e[");
+  if (card) {
+    setup_card_colors(card, selected);
+    printf(RANK(card) == 10 ? "0 " : "  ");
+  } else {
+    printf(mFGCOLOR mWHITE ";" mBGCOLOR mRED "m" uDIAMONDS uCLUBS);
+  }
+  printf("\e[m");
+}
+
+void refresh_screen() {
+  clear_screen();
+
+  // row 1
+  printf(" Q ");
+  printf(selection.ptr == &drawPile ? "\e[32m" uTOPLEFT "\e[mE \e[32m" uTOPRIGHT
+                                      "\e[m"
+                                    : "    ");
+  printf("  ");
+  for (unsigned char index = 0; index <= len(foundation); index++) {
+    const char keys[4] = {'U', 'I', 'O', 'P'};
+    if (selection.ptr == &foundation[index - 1]) {
+      printf("\e[" mFGCOLOR mGREEN "m" uTOPRIGHT "\e[m");
+    } else if (selection.ptr == &foundation[index]) {
+      printf("\e[" mFGCOLOR mGREEN "m" uTOPLEFT "\e[m");
+    } else {
+      printf(" ");
+    }
+    if (index < len(foundation)) {
+      printf("%c ", keys[index]);
+    }
+  }
+
+  // row 2
+  printf("\n ");
+  if (drawPile.numFlipped) {
+    print_card_top(0, false, false);
+  } else {
+    printf("  ");
+  }
+  printf(" ");
+  if (drawPile.numFlipped < drawPile.size) {
+    print_card_top(drawPile.cards[drawPile.size - drawPile.numFlipped],
+                   selection.ptr == &drawPile, false);
+  } else {
+    printf("  ");
+  }
+  printf("    ");
+  for (Card *f = &foundation[0]; f < end(foundation); f++) {
+    if (*f) {
+      print_card_top(*f, selection.ptr == f, false);
+    } else {
+      printf("  ");
+    }
+    printf(" ");
+  }
+
+  // row 3
+  printf("\n ");
+  if (drawPile.numFlipped) {
+    print_card_bottom(0, false);
+  } else {
+    printf("  ");
+  }
+  printf(" ");
+  if (drawPile.numFlipped < drawPile.size) {
+    print_card_bottom(drawPile.cards[drawPile.size - drawPile.numFlipped],
+                      selection.ptr == &drawPile);
+  } else {
+    printf("  ");
+  }
+  printf("    ");
+  for (Card *f = &foundation[0]; f < end(foundation); f++) {
+    if (*f) {
+      print_card_bottom(*f, selection.ptr == f);
+    } else {
+      printf("  ");
+    }
+    printf(" ");
+  }
+
+  // row 4
+  printf("\n");
+  if (selection.ptr) {
+    void *upper_selections[9] = {NULL,           NULL,           &drawPile,
+                                 NULL,           &foundation[0], &foundation[1],
+                                 &foundation[2], &foundation[3], NULL};
+    for (unsigned char i = 0; i <= 7; i++) {
+      if (selection.ptr == upper_selections[i]) {
+        printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMRIGHT "\e[m");
+      } else if (selection.ptr == upper_selections[i + 1]) {
+        printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMLEFT "\e[m");
+      } else if (selection.ptr == &tableau[i - 1] &&
+                 selection.size == tableau[i - 1].size) {
+        printf("\e[" mFGCOLOR mGREEN "m" uTOPRIGHT "\e[m");
+      } else if (selection.ptr == &tableau[i] &&
+                 selection.size == tableau[i].size) {
+        printf("\e[" mFGCOLOR mGREEN "m" uTOPLEFT "\e[m");
+      } else {
+        printf(" ");
+      }
+      if (i < 7) {
+        const char keys[7] = {'A', 'S', 'D', 'F', 'J', 'K', 'L'};
+        printf("%c ", keys[i]);
+      }
+    }
+  } else {
+    printf(" A  S  D  F  J  K  L  ");
+  }
+
+  bool again = true;
+  for (unsigned char row = 0; again; row++) {
+    again = false;
+    printf("\n");
+    for (unsigned char column = 0; column <= len(tableau); column++) {
+      if (selection.ptr == &tableau[column - 1]) {
+        if (tableau[column - 1].size + 1 == row) {
+          printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMRIGHT "\e[m");
+        } else if (tableau[column - 1].size - selection.size == row + 1) {
+          printf("\e[" mFGCOLOR mGREEN "m" uTOPRIGHT "\e[m");
+        } else {
+          printf(" ");
+        }
+      } else if (selection.ptr == &tableau[column]) {
+        if (tableau[column].size + 1 == row) {
+          printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMLEFT "\e[m");
+        } else if (tableau[column].size - selection.size == row + 1) {
+          printf("\e[" mFGCOLOR mGREEN "m" uTOPLEFT "\e[m");
+        } else {
+          printf(" ");
+        }
+      } else {
+        printf(" ");
+      }
+      if (column < len(tableau)) {
+        if (row < tableau[column].size) {
+          print_card_top(
+              tableau[column].numFlipped > row ? 0 : tableau[column].cards[row],
+              selection.ptr == &tableau[column] &&
+                  tableau[column].size - selection.size <= row,
+              row + 1 < tableau[column].size);
+          again = true;
+        } else if (row == tableau[column].size) {
+          bool selected = selection.ptr == &tableau[column] &&
+                          tableau[column].size - selection.size <= row + 1;
+          print_card_bottom(tableau[column].numFlipped >= row
+                                ? 0
+                                : tableau[column].cards[row - 1],
+                            selected);
+          again = again || selected;
+        } else {
+          printf("  ");
+        }
+      }
+    }
+  }
+  printf("\n");
+}
