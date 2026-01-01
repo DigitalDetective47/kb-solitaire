@@ -20,8 +20,8 @@ void new_shuffle() {
   for (Card *ptr = drawPile.cards; ptr < drawPile.cards + 24; ptr++) {
     destinations[destinations_filled++] = ptr;
   }
-  for (unsigned char tableau_index = 0;
-       tableau_index < sizeof(tableau) / sizeof(*tableau); tableau_index++) {
+  for (unsigned char tableau_index = 0; tableau_index < len(tableau);
+       tableau_index++) {
     struct CardPile *current_pile = tableau + tableau_index;
     current_pile->numFlipped = tableau_index;
     current_pile->size = tableau_index + 1;
