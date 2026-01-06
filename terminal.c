@@ -7,7 +7,7 @@
 #include "symbols.h"
 #include "terminal.h"
 
-struct termios outer_settings;
+static struct termios outer_settings;
 
 inline void init_terminal() {
   tcgetattr(STDIN_FILENO, &outer_settings);
@@ -42,10 +42,10 @@ void print_card_top(Card card, bool selected, bool underline) {
   }
   if (card) {
     setup_card_colors(card, selected);
-    const char rank_chars[] = {'A', '2', '3', '4', '5', '6', '7',
+    static const char rank_chars[] = {'A', '2', '3', '4', '5', '6', '7',
                                '8', '9', '1', 'J', 'Q', 'K'};
     printf("%c", rank_chars[RANK(card) - 1]);
-    const char suit_chars[4][4] = {uSPADES, uCLUBS, uHEARTS, uDIAMONDS};
+    static const char suit_chars[4][4] = {uSPADES, uCLUBS, uHEARTS, uDIAMONDS};
     printf("%s", suit_chars[SUIT(card)]);
   } else {
     printf(mFGCOLOR mWHITE ";" mBGCOLOR mRED "m" uSPADES uHEARTS);
@@ -74,7 +74,7 @@ void refresh_screen() {
                                     : "    ");
   printf("  ");
   for (unsigned char index = 0; index <= len(foundation); index++) {
-    const char keys[4] = {'U', 'I', 'O', 'P'};
+    static const char keys[4] = {'U', 'I', 'O', 'P'};
     if (selection.ptr == &foundation[index - 1]) {
       printf("\e[" mFGCOLOR mGREEN "m" uTOPRIGHT "\e[m");
     } else if (selection.ptr == &foundation[index]) {
@@ -156,7 +156,7 @@ void refresh_screen() {
         printf(" ");
       }
       if (i < 7) {
-        const char keys[7] = {'A', 'S', 'D', 'F', 'J', 'K', 'L'};
+        static const char keys[7] = {'A', 'S', 'D', 'F', 'J', 'K', 'L'};
         printf("%c ", keys[i]);
       }
     }
@@ -214,7 +214,7 @@ void refresh_screen() {
 }
 
 char get_action() {
-  const bool allowed_actions[128] = {
+  static const bool allowed_actions[128] = {
       false, false, false, false, false, false, false, false, false, false,
       false, false, false, false, false, false, false, false, false, false,
       false, false, false, false, false, false, false, false, false, false,
