@@ -1,8 +1,22 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <termios.h>
+#include <unistd.h>
 
 #include "main.h"
 #include "symbols.h"
 #include "terminal.h"
+
+struct termios outer_settings;
+
+inline void init_terminal() {
+  tcgetattr(STDIN_FILENO, &outer_settings);
+  struct termios settings = outer_settings;
+  settings.c_lflag &= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &settings);
+  atexit(exit_terminal);
+}
+void exit_terminal() { tcsetattr(STDIN_FILENO, TCSAFLUSH, &outer_settings); }
 
 inline void clear_screen() { printf("\e[2J\e[3J\e[;H"); }
 
@@ -197,4 +211,26 @@ void refresh_screen() {
     }
   }
   printf("\n");
+}
+
+char get_action() {
+  const bool allowed_actions[128] = {
+      false, false, false, false, false, false, false, false, false, false,
+      false, false, false, false, false, false, false, false, false, false,
+      false, false, false, false, false, false, false, false, false, false,
+      false, false, false, false, false, false, false, false, false, false,
+      false, false, false, false, false, false, false, false, false, false,
+      false, false, false, false, false, false, false, false, false, true,
+      false, false, false, false, false, true,  false, false, true,  false,
+      false, false, false, false, true,  true,  true,  false, false, false,
+      false, false, false, true,  false, false, false, false, false, false,
+      false, false, false, false, false, false, false, true,  false, false,
+      true,  false, false, false, false, true,  true,  true,  true,  false,
+      false, true,  true,  true,  false, true,  false, true,  false, true,
+      false, false, false, false, false, false, false, false};
+  char ret;
+  do {
+    scanf("%c", &ret);
+  } while (!allowed_actions[ret]);
+  return ret;
 }
