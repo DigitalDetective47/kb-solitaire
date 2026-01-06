@@ -17,7 +17,7 @@ void clear_screen();
  *
  * @param card pass 0 to draw a card back
  */
-void print_card_top(Card card, bool selected, bool underline);
+void print_card_top(Card card, bool selected);
 
 /**
  * @brief draw the bottom row of a playing card

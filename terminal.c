@@ -35,15 +35,12 @@ void setup_card_colors(Card card, bool selected) {
   printf("m");
 }
 
-void print_card_top(Card card, bool selected, bool underline) {
+void print_card_top(Card card, bool selected) {
   printf("\e[");
-  if (underline) {
-    printf(mUNDERLINE ";");
-  }
   if (card) {
     setup_card_colors(card, selected);
     static const char rank_chars[] = {'A', '2', '3', '4', '5', '6', '7',
-                               '8', '9', '1', 'J', 'Q', 'K'};
+                                      '8', '9', '1', 'J', 'Q', 'K'};
     printf("%c", rank_chars[RANK(card) - 1]);
     static const char suit_chars[4][4] = {uSPADES, uCLUBS, uHEARTS, uDIAMONDS};
     printf("%s", suit_chars[SUIT(card)]);
@@ -90,21 +87,21 @@ void refresh_screen() {
   // row 2
   printf("\n ");
   if (drawPile.numFlipped) {
-    print_card_top(0, false, false);
+    print_card_top(0, false);
   } else {
     printf("  ");
   }
   printf(" ");
   if (drawPile.numFlipped < drawPile.size) {
     print_card_top(drawPile.cards[drawPile.size - drawPile.numFlipped],
-                   selection.ptr == &drawPile, false);
+                   selection.ptr == &drawPile);
   } else {
     printf("  ");
   }
   printf("    ");
   for (Card const *f = &foundation[0]; f < end(foundation); f++) {
     if (*f) {
-      print_card_top(*f, selection.ptr == f, false);
+      print_card_top(*f, selection.ptr == f);
     } else {
       printf("  ");
     }
@@ -190,11 +187,13 @@ void refresh_screen() {
       }
       if (column < len(tableau)) {
         if (row < tableau[column].size) {
+          if (row + 1 < tableau[column].size) {
+            printf("\e[" mUNDERLINE "m");
+          }
           print_card_top(
               tableau[column].numFlipped > row ? 0 : tableau[column].cards[row],
               selection.ptr == &tableau[column] &&
-                  tableau[column].size - selection.size <= row,
-              row + 1 < tableau[column].size);
+                  tableau[column].size - selection.size <= row);
           again = true;
         } else if (row == tableau[column].size) {
           bool selected = selection.ptr == &tableau[column] &&
