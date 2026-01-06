@@ -88,7 +88,7 @@ void refresh_screen() {
     printf("  ");
   }
   printf("    ");
-  for (Card *f = &foundation[0]; f < end(foundation); f++) {
+  for (Card const *f = &foundation[0]; f < end(foundation); f++) {
     if (*f) {
       print_card_top(*f, selection.ptr == f, false);
     } else {
@@ -112,7 +112,7 @@ void refresh_screen() {
     printf("  ");
   }
   printf("    ");
-  for (Card *f = &foundation[0]; f < end(foundation); f++) {
+  for (Card const *f = &foundation[0]; f < end(foundation); f++) {
     if (*f) {
       print_card_bottom(*f, selection.ptr == f);
     } else {
