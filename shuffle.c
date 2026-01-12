@@ -15,31 +15,48 @@ inline unsigned int brand(unsigned int max) {
 }
 
 void new_shuffle() {
-  Card *destinations[52];
-  unsigned char destinations_filled = 0;
-  for (Card *ptr = drawPile.cards; ptr < drawPile.cards + 24; ptr++) {
-    destinations[destinations_filled++] = ptr;
-  }
-  for (unsigned char tableau_index = 0; tableau_index < len(tableau);
-       tableau_index++) {
-    struct CardPile *current_pile = tableau + tableau_index;
-    current_pile->numFlipped = tableau_index;
-    current_pile->size = tableau_index + 1;
-    for (Card *ptr = current_pile->cards;
-         ptr < current_pile->cards + tableau_index + 1; ptr++) {
-      destinations[destinations_filled++] = ptr;
-    }
-  }
+  static Card *const destinations[52] = {
+      &tableau[0].cards[0], &tableau[1].cards[0], &tableau[1].cards[1],
+      &tableau[2].cards[0], &tableau[2].cards[1], &tableau[2].cards[2],
+      &tableau[3].cards[0], &tableau[3].cards[1], &tableau[3].cards[2],
+      &tableau[3].cards[3], &tableau[4].cards[0], &tableau[4].cards[1],
+      &tableau[4].cards[2], &tableau[4].cards[3], &tableau[4].cards[4],
+      &tableau[5].cards[0], &tableau[5].cards[1], &tableau[5].cards[2],
+      &tableau[5].cards[3], &tableau[5].cards[4], &tableau[5].cards[5],
+      &tableau[6].cards[0], &tableau[6].cards[1], &tableau[6].cards[2],
+      &tableau[6].cards[3], &tableau[6].cards[4], &tableau[6].cards[5],
+      &tableau[6].cards[6], &drawPile.cards[0],   &drawPile.cards[1],
+      &drawPile.cards[2],   &drawPile.cards[3],   &drawPile.cards[4],
+      &drawPile.cards[5],   &drawPile.cards[6],   &drawPile.cards[7],
+      &drawPile.cards[8],   &drawPile.cards[9],   &drawPile.cards[10],
+      &drawPile.cards[11],  &drawPile.cards[12],  &drawPile.cards[13],
+      &drawPile.cards[14],  &drawPile.cards[15],  &drawPile.cards[16],
+      &drawPile.cards[17],  &drawPile.cards[18],  &drawPile.cards[19],
+      &drawPile.cards[20],  &drawPile.cards[21],  &drawPile.cards[22],
+      &drawPile.cards[23],
+  };
+  Card unshuffled[52] = {
+      CARD(ACE, SPADES),    CARD(2, SPADES),      CARD(3, SPADES),
+      CARD(4, SPADES),      CARD(5, SPADES),      CARD(6, SPADES),
+      CARD(7, SPADES),      CARD(8, SPADES),      CARD(9, SPADES),
+      CARD(10, SPADES),     CARD(JACK, SPADES),   CARD(QUEEN, SPADES),
+      CARD(KING, SPADES),   CARD(ACE, CLUBS),     CARD(2, CLUBS),
+      CARD(3, CLUBS),       CARD(4, CLUBS),       CARD(5, CLUBS),
+      CARD(6, CLUBS),       CARD(7, CLUBS),       CARD(8, CLUBS),
+      CARD(9, CLUBS),       CARD(10, CLUBS),      CARD(JACK, CLUBS),
+      CARD(QUEEN, CLUBS),   CARD(KING, CLUBS),    CARD(ACE, HEARTS),
+      CARD(2, HEARTS),      CARD(3, HEARTS),      CARD(4, HEARTS),
+      CARD(5, HEARTS),      CARD(6, HEARTS),      CARD(7, HEARTS),
+      CARD(8, HEARTS),      CARD(9, HEARTS),      CARD(10, HEARTS),
+      CARD(JACK, HEARTS),   CARD(QUEEN, HEARTS),  CARD(KING, HEARTS),
+      CARD(ACE, DIAMONDS),  CARD(2, DIAMONDS),    CARD(3, DIAMONDS),
+      CARD(4, DIAMONDS),    CARD(5, DIAMONDS),    CARD(6, DIAMONDS),
+      CARD(7, DIAMONDS),    CARD(8, DIAMONDS),    CARD(9, DIAMONDS),
+      CARD(10, DIAMONDS),   CARD(JACK, DIAMONDS), CARD(QUEEN, DIAMONDS),
+      CARD(KING, DIAMONDS),
+  };
 
-  Card unshuffled[52];
-  destinations_filled = 0;
-  for (enum Suit suit = SPADES; suit <= DIAMONDS; suit++) {
-    for (unsigned char rank = ACE; rank <= KING; rank++) {
-      unshuffled[destinations_filled++] = CARD(rank, suit);
-    }
-  }
-
-  for (destinations_filled = 0; destinations_filled < 52;
+  for (unsigned char destinations_filled = 0; destinations_filled < 52;
        destinations_filled++) {
     unsigned int r = brand(52 - destinations_filled);
     *destinations[destinations_filled] = unshuffled[r];
