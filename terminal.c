@@ -66,9 +66,9 @@ void refresh_screen() {
 
   // row 1
   printf(" Q ");
-  printf(selection.ptr == &drawPile ? "\e[32m" uTOPLEFT "\e[mE \e[32m" uTOPRIGHT
+  printf(selection.ptr == &drawPile ? "\e[32m" uTOPLEFT "\e[mW \e[32m" uTOPRIGHT
                                       "\e[m"
-                                    : "    ");
+                                    : " W  ");
   printf("  ");
   for (unsigned char index = 0; index <= len(foundation); index++) {
     static const char keys[4] = {'U', 'I', 'O', 'P'};
