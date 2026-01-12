@@ -69,7 +69,7 @@ void refresh_screen() {
   printf(selection.ptr == &drawPile ? "\e[32m" uTOPLEFT "\e[mW \e[32m" uTOPRIGHT
                                       "\e[m"
                                     : " W  ");
-  printf("  ");
+  printf("E ");
   for (unsigned char index = 0; index <= len(foundation); index++) {
     static const char keys[4] = {'U', 'I', 'O', 'P'};
     if (selection.ptr == &foundation[index - 1]) {
@@ -98,7 +98,7 @@ void refresh_screen() {
   } else {
     printf("  ");
   }
-  printf("    ");
+  printf(" \e[" mFGCOLOR mRED "m" uBSLASH uFSLASH "\e[m");
   for (Card const *f = &foundation[0]; f < end(foundation); f++) {
     if (*f) {
       print_card_top(*f, selection.ptr == f);
@@ -122,7 +122,7 @@ void refresh_screen() {
   } else {
     printf("  ");
   }
-  printf("    ");
+  printf(" \e[" mFGCOLOR mRED "m" uFSLASH uBSLASH "\e[m ");
   for (Card const *f = &foundation[0]; f < end(foundation); f++) {
     if (*f) {
       print_card_bottom(*f, selection.ptr == f);

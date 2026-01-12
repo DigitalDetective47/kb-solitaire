@@ -11,6 +11,8 @@
 #define uTOPRIGHT "\u2510"
 #define uBOTTOMLEFT "\u2514"
 #define uBOTTOMRIGHT "\u2518"
+#define uBSLASH "\u2572"
+#define uFSLASH "\u2571"
 
 #define mUNDERLINE "4"
 #define mFGCOLOR "3"
