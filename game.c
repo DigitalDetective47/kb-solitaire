@@ -18,7 +18,7 @@ inline bool won() {
 inline void game() {
   char input;
   scanf("%c", &input);
-  void *dest;
+  union Selectable dest;
   switch (input) {
   case 'q':
   case 'Q':
@@ -29,78 +29,78 @@ inline void game() {
     }
   case 'e':
   case 'E':
-    selection.ptr = NULL;
+    selection.ptr.card = NULL;
     refresh_screen();
     return;
   case 'w':
   case 'W':
-    selection.ptr = selection.ptr == &drawPile ? NULL : &drawPile;
+    selection.ptr.card_pile =
+        selection.ptr.card_pile == &drawPile ? NULL : &drawPile;
     selection.size = 1;
     refresh_screen();
     return;
   case 'u':
   case 'U':
-    dest = &foundation[0];
+    dest.card = &foundation[0];
     break;
   case 'i':
   case 'I':
-    dest = &foundation[1];
+    dest.card = &foundation[1];
     break;
   case 'o':
   case 'O':
-    dest = &foundation[2];
+    dest.card = &foundation[2];
     break;
   case 'p':
   case 'P':
-    dest = &foundation[3];
+    dest.card = &foundation[3];
     break;
   case 'a':
   case 'A':
-    dest = &tableau[0];
+    dest.card_pile = &tableau[0];
     break;
   case 's':
   case 'S':
-    dest = &tableau[1];
+    dest.card_pile = &tableau[1];
     break;
   case 'd':
   case 'D':
-    dest = &tableau[2];
+    dest.card_pile = &tableau[2];
     break;
   case 'j':
   case 'J':
-    dest = &tableau[3];
+    dest.card_pile = &tableau[3];
     break;
   case 'k':
   case 'K':
-    dest = &tableau[4];
+    dest.card_pile = &tableau[4];
     break;
   case 'l':
   case 'L':
-    dest = &tableau[5];
+    dest.card_pile = &tableau[5];
     break;
   case ';':
   case ':':
-    dest = &tableau[6];
+    dest.card_pile = &tableau[6];
     break;
   default:
     return;
   }
 
-  if (selection.ptr) {
-    if (selection.ptr == dest) {
-      if (in(dest, foundation)) {
-        selection.ptr = NULL;
+  if (selection.ptr.card) {
+    if (selection.ptr.card == dest.card) {
+      if (in(dest.card, foundation)) {
+        selection.ptr.card = NULL;
       } else if (isupper(input) || input == ':') {
         if (selection.size == 1) {
-          selection.size = ((struct CardPile *)selection.ptr)->size -
-                           ((struct CardPile *)selection.ptr)->numFlipped;
+          selection.size = selection.ptr.card_pile->size -
+                           selection.ptr.card_pile->numFlipped;
         } else {
           selection.size--;
         }
       } else {
-        if (selection.size ==
-            ((struct CardPile *)selection.ptr)->size -
-                ((struct CardPile *)selection.ptr)->numFlipped) {
+        if (selection.size == selection.ptr.card_pile->size -
+                                  selection.ptr.card_pile->numFlipped) {
           selection.size = 1;
         } else {
           selection.size++;
@@ -108,14 +108,15 @@ inline void game() {
       }
     } else {
       try_move(selection, dest);
-      selection.ptr = NULL;
+      selection.ptr.card_pile = NULL;
     }
   } else if (top(dest)) {
     selection.ptr = dest;
-    selection.size = in(dest, tableau) && (isupper(input) || input == ':')
-                         ? ((struct CardPile *)selection.ptr)->size -
-                               ((struct CardPile *)selection.ptr)->numFlipped
-                         : 1;
+    selection.size =
+        in(dest.card_pile, tableau) && (isupper(input) || input == ':')
+            ? selection.ptr.card_pile->size -
+                  selection.ptr.card_pile->numFlipped
+            : 1;
   } else {
     return;
   }
@@ -123,32 +124,28 @@ inline void game() {
   refresh_screen();
 }
 
-inline void try_move(struct Selection from, void *to) {
-  if (in(from.ptr, tableau) && in(to, tableau)) {
+inline void try_move(struct Selection from, union Selectable to) {
+  if (in(from.ptr.card_pile, tableau) && in(to.card_pile, tableau)) {
     const Card move_root =
-        ((struct CardPile *)from.ptr)
-            ->cards[((struct CardPile *)from.ptr)->size - from.size];
+        from.ptr.card_pile->cards[from.ptr.card_pile->size - from.size];
     const Card recipient = top(to);
     if ((!recipient && RANK(move_root) == KING) ||
         (RANK(move_root) + 1 == RANK(recipient) &&
          COLOR(move_root) != COLOR(recipient))) {
-      ((struct CardPile *)from.ptr)->size -= from.size;
-      if (((struct CardPile *)from.ptr)->numFlipped &&
-          ((struct CardPile *)from.ptr)->size ==
-              ((struct CardPile *)from.ptr)->numFlipped) {
-        ((struct CardPile *)from.ptr)->numFlipped--;
+      from.ptr.card_pile->size -= from.size;
+      if (from.ptr.card_pile->numFlipped &&
+          from.ptr.card_pile->size == from.ptr.card_pile->numFlipped) {
+        from.ptr.card_pile->numFlipped--;
       }
-      memcpy(&((struct CardPile *)to)->cards[((struct CardPile *)to)->size],
-             &((struct CardPile *)from.ptr)
-                  ->cards[((struct CardPile *)from.ptr)->size],
-             from.size);
-      ((struct CardPile *)to)->size += from.size;
+      memcpy(&to.card_pile->cards[to.card_pile->size],
+             &from.ptr.card_pile->cards[from.ptr.card_pile->size], from.size);
+      to.card_pile->size += from.size;
     }
   } else if (from.size != 1) {
     return;
-  } else if (in(to, foundation)) {
+  } else if (in(to.card, foundation)) {
     const Card moving = top(from.ptr);
-    const Card recipient = *(Card *)to;
+    const Card recipient = *to.card;
     if ((!recipient && RANK(moving) == ACE) || moving == recipient + 1) {
       pop(from.ptr);
       push(to, moving);

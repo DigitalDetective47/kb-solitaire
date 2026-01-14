@@ -26,49 +26,47 @@ int main() {
   return 0;
 }
 
-Card top(void const *target) {
-  if (in(target, foundation)) {
-    return *(Card const *)target;
-  } else if (target == &drawPile) {
+Card top(union Selectable target) {
+  if (in(target.card, foundation)) {
+    return *target.card;
+  } else if (target.card_pile == &drawPile) {
     return drawPile.size == drawPile.numFlipped
                ? 0
                : drawPile.cards[drawPile.numFlipped];
   } else {
-    return ((struct CardPile const *)target)->size
-               ? ((struct CardPile const *)target)
-                     ->cards[((struct CardPile const *)target)->size - 1]
+    return target.card_pile->size
+               ? target.card_pile->cards[target.card_pile->size - 1]
                : 0;
   }
 }
 
-inline void pop(void *target) {
-  if (in(target, foundation)) {
+inline void pop(union Selectable target) {
+  if (in(target.card, foundation)) {
     const Card removed = top(target);
     if (RANK(removed) == ACE) {
-      *(Card *)target = 0;
+      *target.card = 0;
     } else {
-      *(Card *)target = removed - 1;
+      *target.card = removed - 1;
     }
-  } else if (target == &drawPile) {
+  } else if (target.card_pile == &drawPile) {
     memmove(&drawPile.cards[drawPile.numFlipped],
             &drawPile.cards[drawPile.numFlipped + 1],
             drawPile.size - drawPile.numFlipped - 1);
     drawPile.size--;
   } else {
-    ((struct CardPile *)target)->size--;
-    if (((struct CardPile *)target)->numFlipped &&
-        ((struct CardPile *)target)->size ==
-            ((struct CardPile *)target)->numFlipped) {
-      ((struct CardPile *)target)->numFlipped--;
+    target.card_pile->size--;
+    if (target.card_pile->numFlipped &&
+        target.card_pile->size == target.card_pile->numFlipped) {
+      target.card_pile->numFlipped--;
     }
   }
 }
 
-inline void push(void *target, Card card) {
-  if (in(target, foundation)) {
-    *(Card *)target = card;
-  } else{
-    ((struct CardPile *)target)->cards[((struct CardPile *)target)->size] = card;
-    ((struct CardPile *)target)->size++;
+inline void push(union Selectable target, Card card) {
+  if (in(target.card, foundation)) {
+    *target.card = card;
+  } else {
+    target.card_pile->cards[target.card_pile->size] = card;
+    target.card_pile->size++;
   }
 }

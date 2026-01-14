@@ -16,6 +16,6 @@ void game();
 /**
  * @brief attempt a move
  */
-void try_move(struct Selection from, void *to);
+void try_move(struct Selection from, union Selectable to);
 
 #endif

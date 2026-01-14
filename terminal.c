@@ -66,15 +66,15 @@ void refresh_screen() {
 
   // row 1
   printf(" Q ");
-  printf(selection.ptr == &drawPile ? "\e[32m" uTOPLEFT "\e[mW \e[32m" uTOPRIGHT
-                                      "\e[m"
-                                    : " W  ");
+  printf(selection.ptr.card_pile == &drawPile ? "\e[32m" uTOPLEFT
+                                                "\e[mW \e[32m" uTOPRIGHT "\e[m"
+                                              : " W  ");
   printf("E ");
   for (unsigned char index = 0; index <= len(foundation); index++) {
     static const char keys[4] = {'U', 'I', 'O', 'P'};
-    if (selection.ptr == &foundation[index - 1]) {
+    if (selection.ptr.card == &foundation[index - 1]) {
       printf("\e[" mFGCOLOR mGREEN "m" uTOPRIGHT "\e[m");
-    } else if (selection.ptr == &foundation[index]) {
+    } else if (selection.ptr.card == &foundation[index]) {
       printf("\e[" mFGCOLOR mGREEN "m" uTOPLEFT "\e[m");
     } else {
       printf(" ");
@@ -93,14 +93,15 @@ void refresh_screen() {
   }
   printf(" ");
   if (drawPile.numFlipped < drawPile.size) {
-    print_card_top(top(&drawPile), selection.ptr == &drawPile);
+    print_card_top(top((union Selectable){.card_pile = &drawPile}),
+                   selection.ptr.card_pile == &drawPile);
   } else {
     printf("  ");
   }
   printf(" \e[" mFGCOLOR mRED "m" uBSLASH uFSLASH "\e[m ");
   for (Card const *f = &foundation[0]; f < end(foundation); f++) {
     if (*f) {
-      print_card_top(*f, selection.ptr == f);
+      print_card_top(*f, selection.ptr.card == f);
     } else {
       printf("  ");
     }
@@ -116,14 +117,15 @@ void refresh_screen() {
   }
   printf(" ");
   if (drawPile.numFlipped < drawPile.size) {
-    print_card_bottom(top(&drawPile), selection.ptr == &drawPile);
+    print_card_bottom(top((union Selectable){.card_pile = &drawPile}),
+                      selection.ptr.card_pile == &drawPile);
   } else {
     printf("  ");
   }
   printf(" \e[" mFGCOLOR mRED "m" uFSLASH uBSLASH "\e[m ");
   for (Card const *f = &foundation[0]; f < end(foundation); f++) {
     if (*f) {
-      print_card_bottom(*f, selection.ptr == f);
+      print_card_bottom(*f, selection.ptr.card == f);
     } else {
       printf("  ");
     }
@@ -132,19 +134,26 @@ void refresh_screen() {
 
   // row 4
   printf("\n");
-  if (selection.ptr) {
-    static void const *upper_selections[9] = {
-        NULL,           NULL,           &drawPile,      NULL, &foundation[0],
-        &foundation[1], &foundation[2], &foundation[3], NULL};
+  if (selection.ptr.card) {
+    static const union Selectable upper_selections[9] = {
+        {.card = NULL},
+        {.card = NULL},
+        {.card_pile = &drawPile},
+        {.card = NULL},
+        {.card = &foundation[0]},
+        {.card = &foundation[1]},
+        {.card = &foundation[2]},
+        {.card = &foundation[3]},
+        {.card = NULL}};
     for (unsigned char i = 0; i <= 7; i++) {
-      if (selection.ptr == upper_selections[i]) {
+      if (selection.ptr.card == upper_selections[i].card) {
         printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMRIGHT "\e[m");
-      } else if (selection.ptr == upper_selections[i + 1]) {
+      } else if (selection.ptr.card == upper_selections[i + 1].card) {
         printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMLEFT "\e[m");
-      } else if (selection.ptr == &tableau[i - 1] &&
+      } else if (selection.ptr.card_pile == &tableau[i - 1] &&
                  selection.size == tableau[i - 1].size) {
         printf("\e[" mFGCOLOR mGREEN "m" uTOPRIGHT "\e[m");
-      } else if (selection.ptr == &tableau[i] &&
+      } else if (selection.ptr.card_pile == &tableau[i] &&
                  selection.size == tableau[i].size) {
         printf("\e[" mFGCOLOR mGREEN "m" uTOPLEFT "\e[m");
       } else {
@@ -164,7 +173,7 @@ void refresh_screen() {
     again = false;
     printf("\n");
     for (unsigned char column = 0; column <= len(tableau); column++) {
-      if (selection.ptr == &tableau[column - 1]) {
+      if (selection.ptr.card_pile == &tableau[column - 1]) {
         if (tableau[column - 1].size + 1 == row) {
           printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMRIGHT "\e[m");
         } else if (tableau[column - 1].size - selection.size == row + 1) {
@@ -172,7 +181,7 @@ void refresh_screen() {
         } else {
           printf(" ");
         }
-      } else if (selection.ptr == &tableau[column]) {
+      } else if (selection.ptr.card_pile == &tableau[column]) {
         if (tableau[column].size + 1 == row) {
           printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMLEFT "\e[m");
         } else if (tableau[column].size - selection.size == row + 1) {
@@ -190,11 +199,11 @@ void refresh_screen() {
           }
           print_card_top(
               tableau[column].numFlipped > row ? 0 : tableau[column].cards[row],
-              selection.ptr == &tableau[column] &&
+              selection.ptr.card_pile == &tableau[column] &&
                   tableau[column].size - selection.size <= row);
           again = true;
         } else if (row && row == tableau[column].size) {
-          bool selected = selection.ptr == &tableau[column] &&
+          bool selected = selection.ptr.card_pile == &tableau[column] &&
                           tableau[column].size - selection.size <= row + 1;
           print_card_bottom(tableau[column].numFlipped >= row
                                 ? 0
