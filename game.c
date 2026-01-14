@@ -27,6 +27,7 @@ inline void game() {
     } else {
       drawPile.numFlipped = drawPile.size;
     }
+    [[fallthrough]];
   case 'e':
   case 'E':
     selection.ptr.card = NULL;
