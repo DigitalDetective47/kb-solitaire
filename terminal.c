@@ -93,8 +93,7 @@ void refresh_screen() {
   }
   printf(" ");
   if (drawPile.numFlipped < drawPile.size) {
-    print_card_top(drawPile.cards[drawPile.size - drawPile.numFlipped],
-                   selection.ptr == &drawPile);
+    print_card_top(top(&drawPile), selection.ptr == &drawPile);
   } else {
     printf("  ");
   }
@@ -117,8 +116,7 @@ void refresh_screen() {
   }
   printf(" ");
   if (drawPile.numFlipped < drawPile.size) {
-    print_card_bottom(drawPile.cards[drawPile.size - drawPile.numFlipped],
-                      selection.ptr == &drawPile);
+    print_card_bottom(top(&drawPile), selection.ptr == &drawPile);
   } else {
     printf("  ");
   }
@@ -135,9 +133,9 @@ void refresh_screen() {
   // row 4
   printf("\n");
   if (selection.ptr) {
-    void *upper_selections[9] = {NULL,           NULL,           &drawPile,
-                                 NULL,           &foundation[0], &foundation[1],
-                                 &foundation[2], &foundation[3], NULL};
+    static void const *upper_selections[9] = {
+        NULL,           NULL,           &drawPile,      NULL, &foundation[0],
+        &foundation[1], &foundation[2], &foundation[3], NULL};
     for (unsigned char i = 0; i <= 7; i++) {
       if (selection.ptr == upper_selections[i]) {
         printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMRIGHT "\e[m");
@@ -210,26 +208,4 @@ void refresh_screen() {
     }
   }
   printf("\n");
-}
-
-char get_action() {
-  static const bool allowed_actions[128] = {
-      false, false, false, false, false, false, false, false, false, false,
-      false, false, false, false, false, false, false, false, false, false,
-      false, false, false, false, false, false, false, false, false, false,
-      false, false, false, false, false, false, false, false, false, false,
-      false, false, false, false, false, false, false, false, false, false,
-      false, false, false, false, false, false, false, false, false, true,
-      false, false, false, false, false, true,  false, false, true,  false,
-      false, false, false, false, true,  true,  true,  false, false, false,
-      false, false, false, true,  false, false, false, false, false, false,
-      false, false, false, false, false, false, false, true,  false, false,
-      true,  false, false, false, false, true,  true,  true,  true,  false,
-      false, true,  true,  true,  false, true,  false, true,  false, true,
-      false, false, false, false, false, false, false, false};
-  char ret;
-  do {
-    scanf("%c", &ret);
-  } while (!allowed_actions[ret]);
-  return ret;
 }

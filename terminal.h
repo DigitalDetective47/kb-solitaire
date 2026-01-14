@@ -28,10 +28,4 @@ void print_card_bottom(Card card, bool selected);
 
 void refresh_screen();
 
-/**
- * @brief get a valid move key
- * blocks until an action is available
- */
-char get_action();
-
 #endif
