@@ -1,7 +1,6 @@
+#include "main.h"
 #include <stdlib.h>
 #include <time.h>
-
-#include "main.h"
 
 struct CardPile drawPile;
 struct CardPile tableau[7];

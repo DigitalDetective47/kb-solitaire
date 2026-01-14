@@ -1,11 +1,11 @@
+#include "terminal.h"
+#include "card.h"
+#include "main.h"
+#include "symbols.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
-
-#include "main.h"
-#include "symbols.h"
-#include "terminal.h"
 
 static struct termios outer_settings;
 
