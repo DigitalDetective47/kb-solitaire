@@ -98,7 +98,7 @@ void refresh_screen() {
   } else {
     printf("  ");
   }
-  printf(" \e[" mFGCOLOR mRED "m" uBSLASH uFSLASH "\e[m");
+  printf(" \e[" mFGCOLOR mRED "m" uBSLASH uFSLASH "\e[m ");
   for (Card const *f = &foundation[0]; f < end(foundation); f++) {
     if (*f) {
       print_card_top(*f, selection.ptr == f);
