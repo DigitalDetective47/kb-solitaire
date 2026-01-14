@@ -195,7 +195,7 @@ void refresh_screen() {
               selection.ptr == &tableau[column] &&
                   tableau[column].size - selection.size <= row);
           again = true;
-        } else if (row == tableau[column].size) {
+        } else if (row && row == tableau[column].size) {
           bool selected = selection.ptr == &tableau[column] &&
                           tableau[column].size - selection.size <= row + 1;
           print_card_bottom(tableau[column].numFlipped >= row
