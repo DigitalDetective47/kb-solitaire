@@ -153,12 +153,12 @@ void refresh_screen() {
         printf(" ");
       }
       if (i < 7) {
-        static const char keys[7] = {'A', 'S', 'D', 'F', 'J', 'K', 'L'};
+        static const char keys[7] = {'A', 'S', 'D', 'J', 'K', 'L', ';'};
         printf("%c ", keys[i]);
       }
     }
   } else {
-    printf(" A  S  D  F  J  K  L  ");
+    printf(" A  S  D  J  K  L  ;  ");
   }
 
   bool again = true;
