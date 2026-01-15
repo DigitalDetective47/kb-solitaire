@@ -72,9 +72,10 @@ void refresh_screen() {
   printf("E ");
   for (unsigned char index = 0; index <= len(foundation); index++) {
     static const char keys[4] = {'U', 'I', 'O', 'P'};
-    if (selection.ptr.card == &foundation[index - 1]) {
+    if (index && selection.ptr.card == &foundation[index - 1]) {
       printf("\e[" mFGCOLOR mGREEN "m" uTOPRIGHT "\e[m");
-    } else if (selection.ptr.card == &foundation[index]) {
+    } else if (index < len(foundation) &&
+               selection.ptr.card == &foundation[index]) {
       printf("\e[" mFGCOLOR mGREEN "m" uTOPLEFT "\e[m");
     } else {
       printf(" ");
@@ -150,10 +151,10 @@ void refresh_screen() {
         printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMRIGHT "\e[m");
       } else if (selection.ptr.card == upper_selections[i + 1].card) {
         printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMLEFT "\e[m");
-      } else if (selection.ptr.card_pile == &tableau[i - 1] &&
+      } else if (i && selection.ptr.card_pile == &tableau[i - 1] &&
                  selection.size == tableau[i - 1].size) {
         printf("\e[" mFGCOLOR mGREEN "m" uTOPRIGHT "\e[m");
-      } else if (selection.ptr.card_pile == &tableau[i] &&
+      } else if (i < 7 && selection.ptr.card_pile == &tableau[i] &&
                  selection.size == tableau[i].size) {
         printf("\e[" mFGCOLOR mGREEN "m" uTOPLEFT "\e[m");
       } else {
@@ -173,7 +174,7 @@ void refresh_screen() {
     again = false;
     printf("\n");
     for (unsigned char column = 0; column <= len(tableau); column++) {
-      if (selection.ptr.card_pile == &tableau[column - 1]) {
+      if (column && selection.ptr.card_pile == &tableau[column - 1]) {
         if (tableau[column - 1].size + 1 == row) {
           printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMRIGHT "\e[m");
         } else if (tableau[column - 1].size - selection.size == row + 1) {
@@ -181,18 +182,17 @@ void refresh_screen() {
         } else {
           printf(" ");
         }
-      } else if (selection.ptr.card_pile == &tableau[column]) {
-        if (tableau[column].size + 1 == row) {
-          printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMLEFT "\e[m");
-        } else if (tableau[column].size - selection.size == row + 1) {
-          printf("\e[" mFGCOLOR mGREEN "m" uTOPLEFT "\e[m");
-        } else {
-          printf(" ");
+      } else if (column < len(tableau)) {
+        if (selection.ptr.card_pile == &tableau[column]) {
+          if (tableau[column].size + 1 == row) {
+            printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMLEFT "\e[m");
+          } else if (tableau[column].size - selection.size == row + 1) {
+            printf("\e[" mFGCOLOR mGREEN "m" uTOPLEFT "\e[m");
+          } else {
+            printf(" ");
+          }
         }
-      } else {
-        printf(" ");
-      }
-      if (column < len(tableau)) {
+
         if (row < tableau[column].size) {
           if (row + 1 < tableau[column].size) {
             printf("\e[" mUNDERLINE "m");
@@ -213,6 +213,8 @@ void refresh_screen() {
         } else {
           printf("  ");
         }
+      } else {
+        printf(" ");
       }
     }
   }
