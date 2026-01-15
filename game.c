@@ -17,7 +17,9 @@ inline bool won() {
 
 inline void game() {
   char input;
-  scanf("%c", &input);
+  if (scanf("%c", &input) != 1) {
+    return; // some error reading input
+  }
   union Selectable dest;
   switch (input) {
   case 'q':
