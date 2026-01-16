@@ -182,17 +182,19 @@ void refresh_screen() {
         } else {
           printf(" ");
         }
-      } else if (column < len(tableau)) {
-        if (selection.ptr.card_pile == &tableau[column]) {
-          if (tableau[column].size + 1 == row) {
-            printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMLEFT "\e[m");
-          } else if (tableau[column].size - selection.size == row + 1) {
-            printf("\e[" mFGCOLOR mGREEN "m" uTOPLEFT "\e[m");
-          } else {
-            printf(" ");
-          }
+      } else if (column < len(tableau) &&
+                 selection.ptr.card_pile == &tableau[column]) {
+        if (tableau[column].size + 1 == row) {
+          printf("\e[" mFGCOLOR mGREEN "m" uBOTTOMLEFT "\e[m");
+        } else if (tableau[column].size - selection.size == row + 1) {
+          printf("\e[" mFGCOLOR mGREEN "m" uTOPLEFT "\e[m");
+        } else {
+          printf(" ");
         }
-
+      } else{
+        printf(" ");
+      }
+      if (column < len(tableau)) {
         if (row < tableau[column].size) {
           if (row + 1 < tableau[column].size) {
             printf("\e[" mUNDERLINE "m");
