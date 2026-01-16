@@ -36,7 +36,7 @@ inline void game() {
   case 'w':
   case 'W':
     selection.ptr.card_pile =
-        selection.ptr.card_pile == &drawPile ? NULL : &drawPile;
+        selection.ptr.card_pile == &drawPile || drawPile.size == drawPile.numFlipped ? NULL : &drawPile;
     selection.size = 1;
     refresh_screen();
     return;
