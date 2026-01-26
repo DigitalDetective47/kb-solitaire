@@ -4,6 +4,23 @@
 #include "symbols.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef MSWIN
+#include <windows.h>
+
+static DWORD outer_settings;
+static UINT encoding;
+
+inline void init_terminal() {
+  GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &outer_settings);
+  encoding = GetConsoleOutputCP();
+  DWORD settings = outer_settings & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT);
+  SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), settings);
+  SetConsoleOutputCP(65001);
+  atexit(exit_terminal);
+}
+void exit_terminal() { SetConsoleMode(STDIN_FILENO, outer_settings); }
+#else
 #include <termios.h>
 #include <unistd.h>
 
@@ -17,6 +34,7 @@ inline void init_terminal() {
   atexit(exit_terminal);
 }
 void exit_terminal() { tcsetattr(STDIN_FILENO, TCSAFLUSH, &outer_settings); }
+#endif
 
 inline void clear_screen() { printf("\e[2J\e[3J\e[;H"); }
 
@@ -191,7 +209,7 @@ void refresh_screen() {
         } else {
           printf(" ");
         }
-      } else{
+      } else {
         printf(" ");
       }
       if (column < len(tableau)) {
