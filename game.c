@@ -4,6 +4,7 @@
 #include "terminal.h"
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 inline bool won() {
@@ -17,7 +18,9 @@ inline bool won() {
 
 inline void game() {
   char input;
-  scanf("%c", &input);
+  if (!scanf("%c", &input)) {
+    exit(1);
+  }
   union Selectable dest;
   switch (input) {
   case 'q':
