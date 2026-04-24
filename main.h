@@ -7,7 +7,8 @@
 #define end(array) (&(array)[len(array)])
 #define in(ptr, array) ((ptr) >= (array) && (ptr) < end(array))
 
-struct CardPile {
+struct CardPile
+{
   Card cards[24];
   unsigned char size;
   unsigned char numFlipped;
@@ -17,12 +18,14 @@ extern struct CardPile drawPile;
 extern struct CardPile tableau[7];
 extern Card foundation[4];
 
-union Selectable {
+union Selectable
+{
   Card *card;
   struct CardPile *card_pile;
 };
 
-struct Selection {
+struct Selection
+{
   union Selectable ptr;
   unsigned char size;
 };
