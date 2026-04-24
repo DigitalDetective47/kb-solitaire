@@ -40,10 +40,10 @@ void exit_terminal() { tcsetattr(STDIN_FILENO, TCSAFLUSH, &outer_settings); }
 
 inline void clear_screen() { printf("\e[2J\e[3J\e[;H"); }
 
-void setup_card_colors(Card card, bool selected)
+void setup_card_colors(struct Card card, bool selected)
 {
   printf(mFGCOLOR);
-  switch (COLOR(card))
+  switch (COLOR(card.suit))
   {
   case BLACK:
     printf(mBLACK);
@@ -57,16 +57,16 @@ void setup_card_colors(Card card, bool selected)
   printf("m");
 }
 
-void print_card_top(Card card, bool selected)
+void print_card_top(struct Card card, bool selected)
 {
   printf("\e[");
-  if (card)
+  if (CARDEXISTS(card))
   {
     setup_card_colors(card, selected);
     static const char rank_chars[] = {'A', '2', '3', '4', '5', '6', '7', '8', '9', '1', 'J', 'Q', 'K'};
-    printf("%c", rank_chars[RANK(card) - 1]);
+    printf("%c", rank_chars[card.rank - 1]);
     static const char suit_chars[4][4] = {uSPADES, uCLUBS, uHEARTS, uDIAMONDS};
-    printf("%s", suit_chars[SUIT(card)]);
+    printf("%s", suit_chars[card.suit]);
   }
   else
   {
@@ -75,13 +75,13 @@ void print_card_top(Card card, bool selected)
   printf("\e[m");
 }
 
-void print_card_bottom(Card card, bool selected)
+void print_card_bottom(struct Card card, bool selected)
 {
   printf("\e[");
-  if (card)
+  if (CARDEXISTS(card))
   {
     setup_card_colors(card, selected);
-    printf(RANK(card) == 10 ? "0 " : "  ");
+    printf(card.rank == 10 ? "0 " : "  ");
   }
   else
   {
@@ -123,7 +123,7 @@ void refresh_screen()
   printf("\n ");
   if (drawPile.numFlipped)
   {
-    print_card_top(0, false);
+    print_card_top(NILCARD, false);
   }
   else
   {
@@ -139,9 +139,9 @@ void refresh_screen()
     printf("  ");
   }
   printf(" \e[" mFGCOLOR mRED "m" uBSLASH uFSLASH "\e[m ");
-  for (Card const *f = &foundation[0]; f < end(foundation); f++)
+  for (struct Card const *f = &foundation[0]; f < end(foundation); f++)
   {
-    if (*f)
+    if (CARDEXISTS(*f))
     {
       print_card_top(*f, selection.ptr.card == f);
     }
@@ -156,7 +156,7 @@ void refresh_screen()
   printf("\n ");
   if (drawPile.numFlipped)
   {
-    print_card_bottom(0, false);
+    print_card_bottom(NILCARD, false);
   }
   else
   {
@@ -172,9 +172,9 @@ void refresh_screen()
     printf("  ");
   }
   printf(" \e[" mFGCOLOR mRED "m" uFSLASH uBSLASH "\e[m ");
-  for (Card const *f = &foundation[0]; f < end(foundation); f++)
+  for (struct Card const *f = &foundation[0]; f < end(foundation); f++)
   {
-    if (*f)
+    if (CARDEXISTS(*f))
     {
       print_card_bottom(*f, selection.ptr.card == f);
     }
@@ -273,13 +273,13 @@ void refresh_screen()
           {
             printf("\e[" mUNDERLINE "m");
           }
-          print_card_top(tableau[column].numFlipped > row ? 0 : tableau[column].cards[row], selection.ptr.card_pile == &tableau[column] && tableau[column].size - selection.size <= row);
+          print_card_top(tableau[column].numFlipped > row ? NILCARD : tableau[column].cards[row], selection.ptr.card_pile == &tableau[column] && tableau[column].size - selection.size <= row);
           again = true;
         }
         else if (row && row == tableau[column].size)
         {
           bool selected = selection.ptr.card_pile == &tableau[column] && tableau[column].size - selection.size <= row + 1;
-          print_card_bottom(tableau[column].numFlipped >= row ? 0 : tableau[column].cards[row - 1], selected);
+          print_card_bottom(tableau[column].numFlipped >= row ? NILCARD : tableau[column].cards[row - 1], selected);
           again = again || selected;
         }
         else

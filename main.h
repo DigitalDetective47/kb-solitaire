@@ -9,18 +9,18 @@
 
 struct CardPile
 {
-  Card cards[24];
+  struct Card cards[24];
   unsigned char size;
   unsigned char numFlipped;
 };
 
 extern struct CardPile drawPile;
 extern struct CardPile tableau[7];
-extern Card foundation[4];
+extern struct Card foundation[4];
 
 union Selectable
 {
-  Card *card;
+  struct Card *card;
   struct CardPile *card_pile;
 };
 
@@ -37,7 +37,7 @@ int main();
 /**
  * @brief get the top card of a selection area
  */
-Card top(union Selectable target);
+struct Card top(union Selectable target);
 
 /**
  * @brief remove the top card from an area
@@ -48,6 +48,6 @@ void pop(union Selectable target);
 /**
  * @brief add a card to an area
  */
-void push(union Selectable target, Card card);
+void push(union Selectable target, struct Card card);
 
 #endif

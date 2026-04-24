@@ -9,9 +9,9 @@
 
 inline bool won()
 {
-  for (Card const *f = &foundation[0]; f < end(foundation); f++)
+  for (struct Card const *f = &foundation[0]; f < end(foundation); f++)
   {
-    if (RANK(*f) != KING)
+    if (f->rank != KING)
     {
       return false;
     }
@@ -136,7 +136,7 @@ inline void game()
       selection.ptr.card_pile = NULL;
     }
   }
-  else if (top(dest))
+  else if (CARDEXISTS(top(dest)))
   {
     selection.ptr = dest;
     selection.size = in(dest.card_pile, tableau) && (isupper(input) || input == ':') ? selection.ptr.card_pile->size - selection.ptr.card_pile->numFlipped : 1;
@@ -153,16 +153,16 @@ inline void try_move(struct Selection from, union Selectable to)
 {
   if (in(from.ptr.card_pile, tableau) && in(to.card_pile, tableau))
   {
-    const Card move_root = from.ptr.card_pile->cards[from.ptr.card_pile->size - from.size];
-    const Card recipient = top(to);
-    if ((!recipient && RANK(move_root) == KING) || (RANK(move_root) + 1 == RANK(recipient) && COLOR(move_root) != COLOR(recipient)))
+    const struct Card move_root = from.ptr.card_pile->cards[from.ptr.card_pile->size - from.size];
+    const struct Card recipient = top(to);
+    if ((!CARDEXISTS(recipient) && move_root.rank == KING) || (move_root.rank + 1 == recipient.rank && COLOR(move_root.suit) != COLOR(recipient.suit)))
     {
       from.ptr.card_pile->size -= from.size;
       if (from.ptr.card_pile->numFlipped && from.ptr.card_pile->size == from.ptr.card_pile->numFlipped)
       {
         from.ptr.card_pile->numFlipped--;
       }
-      memcpy(&to.card_pile->cards[to.card_pile->size], &from.ptr.card_pile->cards[from.ptr.card_pile->size], from.size);
+      memcpy(&to.card_pile->cards[to.card_pile->size], &from.ptr.card_pile->cards[from.ptr.card_pile->size], from.size * sizeof(struct Card));
       to.card_pile->size += from.size;
     }
   }
@@ -172,9 +172,9 @@ inline void try_move(struct Selection from, union Selectable to)
   }
   else if (in(to.card, foundation))
   {
-    const Card moving = top(from.ptr);
-    const Card recipient = *to.card;
-    if ((!recipient && RANK(moving) == ACE) || moving == recipient + 1)
+    const struct Card moving = top(from.ptr);
+    const struct Card recipient = *to.card;
+    if ((!CARDEXISTS(recipient) && moving.rank == ACE) || (moving.suit == recipient.suit && moving.rank == recipient.rank + 1))
     {
       pop(from.ptr);
       push(to, moving);
@@ -182,9 +182,9 @@ inline void try_move(struct Selection from, union Selectable to)
   }
   else
   {
-    const Card moving = top(from.ptr);
-    const Card recipient = top(to);
-    if ((!recipient && RANK(moving) == KING) || (RANK(moving) + 1 == RANK(recipient) && COLOR(moving) != COLOR(recipient)))
+    const struct Card moving = top(from.ptr);
+    const struct Card recipient = top(to);
+    if ((!CARDEXISTS(recipient) && moving.rank == KING) || (moving.rank + 1 == recipient.rank && COLOR(moving.suit) != COLOR(recipient.suit)))
     {
       pop(from.ptr);
       push(to, moving);

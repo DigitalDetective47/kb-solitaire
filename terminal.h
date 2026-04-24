@@ -17,14 +17,14 @@ void clear_screen();
  *
  * @param card pass 0 to draw a card back
  */
-void print_card_top(Card card, bool selected);
+void print_card_top(struct Card card, bool selected);
 
 /**
  * @brief draw the bottom row of a playing card
  *
  * @param card pass 0 to draw a card back
  */
-void print_card_bottom(Card card, bool selected);
+void print_card_bottom(struct Card card, bool selected);
 
 void refresh_screen();
 

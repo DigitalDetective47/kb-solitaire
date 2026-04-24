@@ -1,8 +1,6 @@
 #ifndef _CARDH_
 #define _CARDH_
 
-typedef unsigned char Card;
-
 #define ACE 1
 #define JACK 11
 #define QUEEN 12
@@ -22,10 +20,15 @@ enum Color
   RED = 1,
 };
 
-#define RANK(c) ((c) & 15)
-#define SUIT(c) ((c) >> 4)
-#define COLOR(c) ((c) >> 5)
+#define COLOR(s) ((s) >> 1)
 
-#define CARD(rank, suit) ((rank) + ((suit) << 4))
+struct Card
+{
+  unsigned rank : 4;
+  enum Suit suit : 2;
+};
+
+#define CARDEXISTS(c) ((c).rank != 0)
+#define NILCARD (struct Card){0, 0}
 
 #endif

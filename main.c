@@ -9,7 +9,7 @@
 
 struct CardPile drawPile;
 struct CardPile tableau[7];
-Card foundation[4];
+struct Card foundation[4];
 
 struct Selection selection;
 
@@ -28,7 +28,7 @@ int main()
   return 0;
 }
 
-Card top(union Selectable target)
+struct Card top(union Selectable target)
 {
   if (in(target.card, foundation))
   {
@@ -36,11 +36,11 @@ Card top(union Selectable target)
   }
   else if (target.card_pile == &drawPile)
   {
-    return drawPile.size == drawPile.numFlipped ? 0 : drawPile.cards[drawPile.numFlipped];
+    return drawPile.size == drawPile.numFlipped ? NILCARD : drawPile.cards[drawPile.numFlipped];
   }
   else
   {
-    return target.card_pile->size ? target.card_pile->cards[target.card_pile->size - 1] : 0;
+    return target.card_pile->size ? target.card_pile->cards[target.card_pile->size - 1] : NILCARD;
   }
 }
 
@@ -48,19 +48,19 @@ inline void pop(union Selectable target)
 {
   if (in(target.card, foundation))
   {
-    const Card removed = top(target);
-    if (RANK(removed) == ACE)
+    const struct Card removed = top(target);
+    if (removed.rank == ACE)
     {
-      *target.card = 0;
+      *target.card = NILCARD;
     }
     else
     {
-      *target.card = removed - 1;
+      *target.card = (struct Card){removed.rank - 1, removed.suit};
     }
   }
   else if (target.card_pile == &drawPile)
   {
-    memmove(&drawPile.cards[drawPile.numFlipped], &drawPile.cards[drawPile.numFlipped + 1], drawPile.size - drawPile.numFlipped - 1);
+    memmove(&drawPile.cards[drawPile.numFlipped], &drawPile.cards[drawPile.numFlipped + 1], (drawPile.size - drawPile.numFlipped - 1) * sizeof(struct Card));
     drawPile.size--;
   }
   else
@@ -73,7 +73,7 @@ inline void pop(union Selectable target)
   }
 }
 
-inline void push(union Selectable target, Card card)
+inline void push(union Selectable target, struct Card card)
 {
   if (in(target.card, foundation))
   {
