@@ -25,7 +25,7 @@ int main()
     game();
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 struct Card top(union Selectable target)

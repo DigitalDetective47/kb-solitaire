@@ -23,7 +23,7 @@ void game()
   char input;
   if (!scanf("%c", &input))
   {
-    exit(1);
+    exit(EXIT_FAILURE);
   }
   union Selectable dest;
   switch (input)
