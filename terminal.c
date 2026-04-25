@@ -65,7 +65,7 @@ void print_card_top(struct Card card, bool selected)
     setup_card_colors(card, selected);
     static const char rank_chars[] = {'A', '2', '3', '4', '5', '6', '7', '8', '9', '1', 'J', 'Q', 'K'};
     printf("%c", rank_chars[card.rank - 1]);
-    static const char suit_chars[4][4] = {uSPADES, uCLUBS, uHEARTS, uDIAMONDS};
+    static const char suit_chars[][4] = {uSPADES, uCLUBS, uHEARTS, uDIAMONDS};
     printf("%s", suit_chars[card.suit]);
   }
   else
@@ -98,7 +98,7 @@ void refresh_screen()
   printf(" Q ");
   printf(selection.ptr.card_pile == &drawPile ? "\e[32m" uTOPLEFT "\e[mW \e[32m" uTOPRIGHT "\e[m" : " W  ");
   printf("E ");
-  for (unsigned char index = 0; index <= len(foundation); index++)
+  for (size_t index = 0; index <= len(foundation); index++)
   {
     static const char keys[4] = {'U', 'I', 'O', 'P'};
     if (index && selection.ptr.card == &foundation[index - 1])
@@ -190,7 +190,7 @@ void refresh_screen()
   if (selection.ptr.card)
   {
     static const union Selectable upper_selections[9] = {{.card = NULL}, {.card = NULL}, {.card_pile = &drawPile}, {.card = NULL}, {.card = &foundation[0]}, {.card = &foundation[1]}, {.card = &foundation[2]}, {.card = &foundation[3]}, {.card = NULL}};
-    for (unsigned char i = 0; i <= 7; i++)
+    for (size_t i = 0; i <= len(tableau); i++)
     {
       if (selection.ptr.card == upper_selections[i].card)
       {
@@ -225,11 +225,11 @@ void refresh_screen()
   }
 
   bool again = true;
-  for (unsigned char row = 0; again; row++)
+  for (size_t row = 0; again; row++)
   {
     again = false;
     printf("\n");
-    for (unsigned char column = 0; column <= len(tableau); column++)
+    for (size_t column = 0; column <= len(tableau); column++)
     {
       if (column && selection.ptr.card_pile == &tableau[column - 1])
       {

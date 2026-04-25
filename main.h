@@ -10,8 +10,8 @@
 struct CardPile
 {
   struct Card cards[24];
-  unsigned char size;
-  unsigned char numFlipped;
+  size_t size;
+  size_t numFlipped;
 };
 
 extern struct CardPile drawPile;
@@ -27,7 +27,7 @@ union Selectable
 struct Selection
 {
   union Selectable ptr;
-  unsigned char size;
+  size_t size;
 };
 
 extern struct Selection selection;
