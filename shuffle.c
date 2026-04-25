@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-inline unsigned int brand(unsigned int max)
+unsigned int brand(unsigned int max)
 {
   unsigned int rejection_threshold = ((unsigned)RAND_MAX + 1) / max * max;
   unsigned int r;

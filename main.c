@@ -44,7 +44,7 @@ struct Card top(union Selectable target)
   }
 }
 
-inline void pop(union Selectable target)
+void pop(union Selectable target)
 {
   if (in(target.card, foundation))
   {
@@ -73,7 +73,7 @@ inline void pop(union Selectable target)
   }
 }
 
-inline void push(union Selectable target, struct Card card)
+void push(union Selectable target, struct Card card)
 {
   if (in(target.card, foundation))
   {

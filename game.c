@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-inline bool won()
+bool won()
 {
   for (struct Card const *f = &foundation[0]; f < end(foundation); f++)
   {
@@ -19,7 +19,7 @@ inline bool won()
   return true;
 }
 
-inline void game()
+void game()
 {
   char input;
   if (!scanf("%c", &input))
@@ -149,7 +149,7 @@ inline void game()
   refresh_screen();
 }
 
-inline void try_move(struct Selection from, union Selectable to)
+void try_move(struct Selection from, union Selectable to)
 {
   if (in(from.ptr.card_pile, tableau) && in(to.card_pile, tableau))
   {
