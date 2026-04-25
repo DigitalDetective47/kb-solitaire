@@ -2,6 +2,9 @@
 #define _TERMINALH_
 
 #include "card.h"
+#include <ctype.h>
+
+#define isshift(c) (isupper(c) || (c) == ':')
 
 void init_terminal();
 

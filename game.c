@@ -2,7 +2,6 @@
 #include "card.h"
 #include "main.h"
 #include "terminal.h"
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -107,7 +106,7 @@ void game()
       {
         selection.ptr.card = NULL;
       }
-      else if (isupper(input) || input == ':')
+      else if (isshift(input))
       {
         if (selection.size == 1)
         {
@@ -139,7 +138,7 @@ void game()
   else if (CARDEXISTS(top(dest)))
   {
     selection.ptr = dest;
-    selection.size = in(dest.card_pile, tableau) && (isupper(input) || input == ':') ? selection.ptr.card_pile->size - selection.ptr.card_pile->numFlipped : 1;
+    selection.size = in(dest.card_pile, tableau) && isshift(input) ? selection.ptr.card_pile->size - selection.ptr.card_pile->numFlipped : 1;
   }
   else
   {
