@@ -2,6 +2,7 @@
 #define _MAINH_
 
 #include "card.h"
+#include <stdlib.h>
 
 #define len(array) (sizeof(array) / sizeof(*(array)))
 #define end(array) (&(array)[len(array)])

@@ -3,7 +3,6 @@
 #include "game.h"
 #include "shuffle.h"
 #include "terminal.h"
-#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
