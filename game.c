@@ -20,11 +20,16 @@ bool won(void)
 
 void game(void)
 {
-  char input;
-  if (!scanf("%c", &input))
+  char input = getchar();
+  if (ferror(stdin))
   {
     exit(EXIT_FAILURE);
   }
+  else if (feof(stdin))
+  {
+    exit(EXIT_SUCCESS);
+  }
+
   union Selectable dest;
   switch (input)
   {
