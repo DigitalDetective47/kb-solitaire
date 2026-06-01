@@ -6,14 +6,14 @@
 
 #define isshift(c) (isupper(c) || (c) == ':')
 
-void init_terminal();
+void init_terminal(void);
 
-void exit_terminal();
+void exit_terminal(void);
 
 /**
  * @brief erase all text on-screen and reset the cursor to the top-left corner
  */
-void clear_screen();
+void clear_screen(void);
 
 /**
  * @brief draw the top row of a playing card
@@ -29,6 +29,6 @@ void print_card_top(struct Card card, bool selected);
  */
 void print_card_bottom(struct Card card, bool selected);
 
-void refresh_screen();
+void refresh_screen(void);
 
 #endif

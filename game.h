@@ -6,12 +6,12 @@
 /**
  * @brief whether the current game is won
  */
-bool won();
+bool won(void);
 
 /**
  * @brief handles the main game logic; meant to be called in a loop
  */
-void game();
+void game(void);
 
 /**
  * @brief attempt a move

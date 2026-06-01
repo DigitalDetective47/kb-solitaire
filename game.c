@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-bool won()
+bool won(void)
 {
   for (struct Card const *f = &foundation[0]; f < end(foundation); f++)
   {
@@ -18,7 +18,7 @@ bool won()
   return true;
 }
 
-void game()
+void game(void)
 {
   char input;
   if (!scanf("%c", &input))

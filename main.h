@@ -32,7 +32,7 @@ struct Selection
 
 extern struct Selection selection;
 
-int main();
+int main(void);
 
 /**
  * @brief get the top card of a selection area

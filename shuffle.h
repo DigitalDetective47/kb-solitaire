@@ -8,6 +8,6 @@
  */
 unsigned int brand(unsigned int max);
 
-void new_shuffle();
+void new_shuffle(void);
 
 #endif

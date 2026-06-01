@@ -11,7 +11,7 @@
 static DWORD outer_settings;
 static UINT encoding;
 
-void init_terminal()
+void init_terminal(void)
 {
   GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &outer_settings);
   encoding = GetConsoleOutputCP();
@@ -20,14 +20,14 @@ void init_terminal()
   SetConsoleOutputCP(65001);
   atexit(exit_terminal);
 }
-void exit_terminal() { SetConsoleMode(STDIN_FILENO, outer_settings); }
+void exit_terminal(void) { SetConsoleMode(STDIN_FILENO, outer_settings); }
 #else
 #include <termios.h>
 #include <unistd.h>
 
 static struct termios outer_settings;
 
-void init_terminal()
+void init_terminal(void)
 {
   tcgetattr(STDIN_FILENO, &outer_settings);
   struct termios settings = outer_settings;
@@ -35,10 +35,10 @@ void init_terminal()
   tcsetattr(STDIN_FILENO, TCSANOW, &settings);
   atexit(exit_terminal);
 }
-void exit_terminal() { tcsetattr(STDIN_FILENO, TCSAFLUSH, &outer_settings); }
+void exit_terminal(void) { tcsetattr(STDIN_FILENO, TCSAFLUSH, &outer_settings); }
 #endif
 
-void clear_screen() { printf("\e[2J\e[3J\e[;H"); }
+void clear_screen(void) { printf("\e[2J\e[3J\e[;H"); }
 
 void setup_card_colors(struct Card card, bool selected)
 {
@@ -90,7 +90,7 @@ void print_card_bottom(struct Card card, bool selected)
   printf("\e[m");
 }
 
-void refresh_screen()
+void refresh_screen(void)
 {
   clear_screen();
 

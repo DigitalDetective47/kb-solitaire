@@ -13,7 +13,7 @@ struct Card foundation[4];
 
 struct Selection selection;
 
-int main()
+int main(void)
 {
   srand(time(NULL));
   init_terminal();
